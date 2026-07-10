@@ -15,15 +15,20 @@ public class DataRequestResponder {
         this.callback = callback;
     }
 
+    /**
+     * Respond to a received request. This method should not be handled manually, the server's listener calls this method automatically.
+     * @param request the request data as a {@link JSONObject}
+     * @return the response data as a {@link JSONObject}
+     */
     public JSONObject respond(JSONObject request) {
         return this.callback.apply(request);
     }
 
     /**
-     * Creates a new Data Request Responder. Must be registered before {@link net.swofty.redisapi.api.RedisAPI#startListeners()} in order to work properly.
-     * @param key The key to respond to.
-     * @param callback Callback, has a JSONObject parameter request, and returns a JSONObject response, request and response both can be empty.
-     * @return The created DataRequestResponder, not entirely useful, but still there.
+     * Create a responder to a data request, so when a data request with a specified key gets sent to this server, it'll respond back.
+     * @param key the server's unique key.
+     * @param callback callback function, the input is the request data as a {@link JSONObject} and the output must be your response data as a {@link JSONObject}.
+     * @return the responder you just created.
      */
     public static DataRequestResponder create(String key, Function<JSONObject, JSONObject> callback) {
         DataRequestResponder responder = new DataRequestResponder(callback);
@@ -32,9 +37,9 @@ public class DataRequestResponder {
     }
 
     /**
-     * Get a DataRequestResponder by key.
-     * @param key The key to get the DataRequestResponder by.
-     * @return The DataRequestResponder, or null if it doesn't exist.
+     * Get a responder by its unique key.
+     * @param key The responder's unique key.
+     * @return The {@link DataRequestResponder} which is stored with that unique key.
      */
     public static DataRequestResponder get(String key) {
         return RESPONDERS.get(key);

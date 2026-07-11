@@ -3,9 +3,9 @@ package net.swofty.redisapi.api.requests;
 import net.swofty.redisapi.api.ChannelRegistry;
 import net.swofty.redisapi.api.RedisAPI;
 import net.swofty.redisapi.util.RedisParsableMessage;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -26,8 +26,9 @@ public class DataRequest {
      * Create a new data request to get a specific object of data from a specific server.
      * @param filterID the destination of the request. Can be "all" for all listeners.
      * @param key a unique key for the data request.
+     * @param data optional request payload, may be null for an empty payload.
      */
-    public DataRequest(String filterID, String key, JSONObject data) {
+    public DataRequest(String filterID, String key, @Nullable JSONObject data) {
         this.id = UUID.randomUUID().toString();
         this.filter = filterID;
         this.key = key;
@@ -52,9 +53,9 @@ public class DataRequest {
         request.put("id", id);
         request.put("key", key);
         request.put("data", data);
-        request.put("sender", RedisAPI.getInstance().getFilterId()); // We assumne your FilterID is set before using this.
+        request.put("sender", RedisAPI.getInstance().getFilterId()); // We assume your FilterID is set before using this.
         request.put("stream", StreamType.REQUEST.name());
-        RedisAPI.getInstance().publishMessage(filter, ChannelRegistry.getFromName("data-request"), RedisParsableMessage.build(request).formatForSend());
+        RedisAPI.getInstance().publishMessage(filter, ChannelRegistry.getFromName("internal-data-request"), RedisParsableMessage.build(request).formatForSend());
 
         return responseFuture
                 .completeOnTimeout(null, TIMEOUT_MS, TimeUnit.MILLISECONDS)

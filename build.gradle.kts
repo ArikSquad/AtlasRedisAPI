@@ -19,6 +19,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
 
+    compileOnly("org.jetbrains:annotations:26.0.2")
+
     implementation("redis.clients:jedis:7.2.0")
 }
 

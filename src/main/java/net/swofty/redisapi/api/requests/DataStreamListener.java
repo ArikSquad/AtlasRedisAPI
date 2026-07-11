@@ -4,8 +4,13 @@ import net.swofty.redisapi.api.ChannelRegistry;
 import net.swofty.redisapi.api.RedisAPI;
 import net.swofty.redisapi.events.RedisMessagingReceiveInterface;
 import net.swofty.redisapi.util.RedisParsableMessage;
+import org.jetbrains.annotations.ApiStatus;
 import org.json.JSONObject;
 
+/**
+ * Internal use, not for outside API
+ */
+@ApiStatus.Internal
 public class DataStreamListener implements RedisMessagingReceiveInterface {
     @Override
     public void onMessage(String channel, String message) {
@@ -24,15 +29,17 @@ public class DataStreamListener implements RedisMessagingReceiveInterface {
                 JSONObject response = responder.respond(data);
                 JSONObject responseJson = new JSONObject();
                 responseJson.put("id", id);
-                responseJson.put("sender", "internal");
+                responseJson.put("sender", RedisAPI.getInstance().getFilterId());
                 responseJson.put("stream", DataRequest.StreamType.RESPONSE.name());
                 responseJson.put("key", key);
                 responseJson.put("data", response);
 
                 RedisAPI.getInstance().publishMessage(sender, ChannelRegistry.getFromName("internal-data-request"),
-                        RedisParsableMessage.from(responseJson).formatForSend());
+                        RedisParsableMessage.build(responseJson).formatForSend());
             }
-            case RESPONSE -> DataRequest.RECEIVED_DATA.put(id, data);
+            case RESPONSE -> {
+                DataRequest.receive(id, data);
+            }
         }
     }
 }

@@ -9,7 +9,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "./gradlew build -Pversion=${nextRelease.version}",
+        "prepareCmd": "./gradlew build -x test -Pversion=${nextRelease.version}",
         "publishCmd": "echo RELEASE_VERSION=${nextRelease.version} >> $GITHUB_ENV"
       }
     ],

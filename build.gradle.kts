@@ -22,6 +22,19 @@ dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
 
     implementation("redis.clients:jedis:7.2.0")
+
+    testImplementation(platform("org.junit:junit-bom:5.13.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showExceptions = true
+        showCauses = true
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {

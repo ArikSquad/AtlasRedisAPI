@@ -38,8 +38,8 @@ public class RedisParsableMessage {
     public static RedisParsableMessage parse(String raw) {
         String toParse = raw;
         if (raw.contains(";")) {
-            String[] split = raw.split(";");
-            toParse = split[1];
+            // Limit 2 so semicolons inside the JSON payload survive the filter-id prefix strip
+            toParse = raw.split(";", 2)[1];
         }
         return new RedisParsableMessage(new JSONObject(toParse));
     }
